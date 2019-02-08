@@ -1,0 +1,14 @@
+{
+  "name": "impounded-scooters",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/awendland/cs260-serverless-impounded-scooter-notif",
+  "author": "Cool folks in cs260",
+  "license": "MIT",
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.2",
+    "form-data": "^2.3.3",
+    "node-fetch": "^2.3.0",
+    "wretch": "^1.4.2"
+  }
+}
