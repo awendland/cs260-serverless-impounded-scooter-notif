@@ -20,6 +20,7 @@ module.exports['gov-deals'] = async (event, context) => {
   const $ = cheerio.load(html)
   const results = $(`.searchResults tr`).map((i, el) => ({
     thumbnail: cheerio(el).find('td:nth-child(1) img').attr('src'),
+    // title: cheerio(el).find('td:nth-child(1) a').text().trim(),
   })).get()
   return {
     statusCode: 200,

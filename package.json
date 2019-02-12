@@ -9,6 +9,7 @@
     "cheerio": "^1.0.0-rc.2",
     "form-data": "^2.3.3",
     "node-fetch": "^2.3.0",
+    "serverless-dynamodb-local": "0.2.25",
     "wretch": "^1.4.2"
   }
 }

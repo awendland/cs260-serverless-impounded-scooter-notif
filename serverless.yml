@@ -20,6 +20,8 @@ service: impounded-scooters # NOTE: update this with your service name
 provider:
   name: aws
   runtime: nodejs8.10
+plugins:
+  - serverless-dynamodb-local
 
 # you can overwrite defaults here
 #  stage: dev
@@ -93,6 +95,21 @@ functions:
 
 # you can add CloudFormation resource templates here
 #resources:
+resources:  # CloudFormation template syntax
+  Resources:
+    usersTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: scootersTable
+        AttributeDefinitions:
+          - AttributeName: image
+            AttributeType: S
+        KeySchema:
+          - AttributeName: image
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
 #  Resources:
 #    NewResource:
 #      Type: AWS::S3::Bucket
