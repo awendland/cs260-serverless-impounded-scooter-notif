@@ -17,11 +17,32 @@ service: impounded-scooters # NOTE: update this with your service name
 # Check out our docs for more details
 # frameworkVersion: "=X.X.X"
 
+plugins:
+  - serverless-dynamodb-local
+  - serverless-offline
+
+custom:
+  dynamodb:
+    start:
+      port: 8004
+      inMemory: true
+      migrate: true
+
 provider:
   name: aws
   runtime: nodejs8.10
-plugins:
-  - serverless-dynamodb-local
+  environment:
+    DYNAMODB_TABLE: ${self:service}-${opt:stage, self:provider.stage}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
 
 # you can overwrite defaults here
 #  stage: dev
@@ -59,6 +80,20 @@ plugins:
 functions:
   gov-deals:
     handler: handler.gov-deals
+    events:
+      - http:
+          path: scooters
+          method: post
+          cors: true
+
+  list:
+    handler: list.list
+    events:
+      - http:
+          path: list
+          method: get
+          cors: true
+
 
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
@@ -95,21 +130,25 @@ functions:
 
 # you can add CloudFormation resource templates here
 #resources:
-resources:  # CloudFormation template syntax
+resources:
   Resources:
-    usersTable:
-      Type: AWS::DynamoDB::Table
+    TodosDynamoDbTable:
+      Type: 'AWS::DynamoDB::Table'
+      # temp for testing
+      DeletionPolicy: Delete
       Properties:
-        TableName: scootersTable
         AttributeDefinitions:
-          - AttributeName: image
+          -
+            AttributeName: id
             AttributeType: S
         KeySchema:
-          - AttributeName: image
+          -
+            AttributeName: id
             KeyType: HASH
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
+        TableName: ${self:provider.environment.DYNAMODB_TABLE}
 #  Resources:
 #    NewResource:
 #      Type: AWS::S3::Bucket
